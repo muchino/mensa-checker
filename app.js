@@ -40,7 +40,7 @@ async function fetchMenu(date) {
     });
 
     return {
-        resourcesId,
+       resourcesId,
         date: targetDate,
         meals
     };
