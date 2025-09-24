@@ -1,10 +1,9 @@
-// app.js
 const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
 
 const app = express();
-const PORT = 8092;
+const PORT = process.env.PORT || 8092; // IMPORTANT: use EB port
 
 function formatDate(d) {
     const dd = String(d.getDate()).padStart(2, '0');
@@ -16,41 +15,26 @@ function formatDate(d) {
 async function fetchMenu(date) {
     const url = 'https://www.stw-thueringen.de/xhr/loadspeiseplan.html';
     const resourcesId = '46';
-
     const targetDate = date || formatDate(new Date());
 
     const resp = await axios.post(
         url,
-        new URLSearchParams({
-            resources_id: resourcesId,
-            date: targetDate
-        }).toString(),
-        {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        }
+        new URLSearchParams({ resources_id: resourcesId, date: targetDate }).toString(),
+        { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
     );
 
     const $ = cheerio.load(resp.data);
-
     const meals = [];
-    $('.mealText').each((i, el) => {
-        meals.push($(el).text().trim());
-    });
+    $('.mealText').each((i, el) => meals.push($(el).text().trim()));
 
-    return {
-       resourcesId,
-        date: targetDate,
-        meals
-    };
+    return { resourcesId, date: targetDate, meals };
 }
 
-app.get('/menu', async (req, res) => {
-    const date = req.query.date;
+app.get('/', (req, res) => res.send("Mensa Checker API is running"));
 
+app.get('/menu', async (req, res) => {
     try {
-        const result = await fetchMenu(date);
+        const result = await fetchMenu(req.query.date);
         res.json(result);
     } catch (err) {
         res.status(500).json({ error: err.toString() });
