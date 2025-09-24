@@ -1,0 +1,20 @@
+{
+  "name": "mensa-menu-service",
+  "version": "1.0.0",
+  "description": "REST API to fetch and parse menu plans from thueringen.my-mensa.de",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.7",
+    "cheerio": "^1.0.0",
+    "express": "^4.21.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  },
+  "author": "",
+  "license": "MIT"
+}
